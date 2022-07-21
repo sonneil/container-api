@@ -1,0 +1,6 @@
+rootProject.name = 'container-api'
+
+include 'container-api-commons','container-api-sdk'
+
+project(':container-api-commons').projectDir = new File('../container-api-commons')
+project(':container-api-sdk').projectDir = new File('../container-api-sdk')

@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.3.xsd http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+	
+    
+    <changeSet id="db-1.0.0" author="nbenitez">
+        <preConditions onFail="MARK_RAN" onFailMessage="table USER_STATUS already exists">
+            <sqlCheck expectedResult="0">SELECT COUNT(1) FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'USER_STATUS'; </sqlCheck>
+        </preConditions>
+  
+        <sql>
+        	CREATE TABLE USER_STATUS (
+			    status_id INT NOT NULL,
+			    description varchar(255),
+			    PRIMARY KEY(status_id)
+			);
+        </sql>
+    </changeSet>
+
+	<changeSet id="db-1.0.1" author="nbenitez">
+        <preConditions onFail="MARK_RAN" onFailMessage="user_status 'ACTIVE' and 'INACTIVE' already created">
+            <sqlCheck expectedResult="0">SELECT COUNT(1) FROM USER_STATUS</sqlCheck>
+        </preConditions>
+  
+        <sql>
+			insert USER_STATUS values (1, 'ACTIVE');
+			insert USER_STATUS values (2, 'INACTIVE');
+        </sql>
+    </changeSet>
+    
+    <changeSet id="db-1.0.2" author="nbenitez">
+        <preConditions onFail="MARK_RAN" onFailMessage="table USER_CREDENTIALS already exists">
+            <sqlCheck expectedResult="0">SELECT COUNT(1) FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'USER_CREDENTIALS'; </sqlCheck>
+        </preConditions>
+  
+        <sql>
+        	CREATE TABLE USER_CREDENTIALS (
+			    user_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+			    user_name varchar(255),
+			    user_password varchar(255),
+			    user_status_id INT NOT NULL,
+			    FOREIGN KEY (user_status_id) REFERENCES USER_STATUS(status_id)
+			);
+        </sql>
+    </changeSet>
+    
+    <changeSet id="db-1.0.3" author="nbenitez">
+        <preConditions onFail="MARK_RAN" onFailMessage="table ROLE already exists">
+            <sqlCheck expectedResult="0">SELECT COUNT(1) FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'ROLE'; </sqlCheck>
+        </preConditions>
+  
+        <sql>
+			CREATE TABLE ROLE (
+			    role_id INT NOT NULL PRIMARY KEY,
+			    description varchar(255),
+			    acronym varchar(255)
+			);
+        </sql>
+    </changeSet>
+    
+    <changeSet id="db-1.0.4" author="nbenitez">
+        <preConditions onFail="MARK_RAN" onFailMessage="table USER_ROLE already exists">
+            <sqlCheck expectedResult="0">SELECT COUNT(1) FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'USER_ROLE'; </sqlCheck>
+        </preConditions>
+  
+        <sql>
+			CREATE TABLE USER_ROLE (
+			    user_id INT NOT NULL,
+			    role_id INT NOT NULL,
+			    FOREIGN KEY (user_id) REFERENCES user_credentials(user_id),
+			    FOREIGN KEY (role_id) REFERENCES role(role_id)
+			);
+        </sql>
+    </changeSet>
+    
+    <changeSet id="db-1.0.5" author="nbenitez">
+        <preConditions onFail="MARK_RAN" onFailMessage="USER 'admin' already created">
+            <sqlCheck expectedResult="0">SELECT COUNT(1) FROM USER_CREDENTIALS where user_name = 'admin'</sqlCheck>
+        </preConditions>
+  
+        <sql>
+			insert USER_CREDENTIALS(user_name, user_password, user_status_id) values ('admin', '$2a$10$bGXQLJRGjjoF2y/inz/h6.VPhtVNKtLLxD3GtDiMJ64JLm9TgwUEm', 1);
+        </sql>
+    </changeSet>
+    
+    <changeSet id="db-1.0.6" author="nbenitez">
+        <preConditions onFail="MARK_RAN" onFailMessage="role 'ROLE_ADMIN' already created">
+            <sqlCheck expectedResult="0">SELECT COUNT(1) FROM ROLE where role_id = 1</sqlCheck>
+        </preConditions>
+  
+        <sql>
+			insert ROLE(role_id, description, acronym) values (1, 'ROLE_ADMIN', 'ROLE_ADMIN');
+        </sql>
+    </changeSet>
+    
+    <changeSet id="db-1.0.7" author="nbenitez">
+        <preConditions onFail="MARK_RAN" onFailMessage="relation user-role for 'admin' already created">
+            <sqlCheck expectedResult="0">SELECT COUNT(1) FROM USER_ROLE where user_id = 1 and role_id = 1</sqlCheck>
+        </preConditions>
+  
+        <sql>
+			insert USER_ROLE(user_id, role_id) values (1, 1);
+        </sql>
+    </changeSet>
+</databaseChangeLog>

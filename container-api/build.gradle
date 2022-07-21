@@ -1,0 +1,89 @@
+buildscript {
+    repositories {
+     	mavenLocal()
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.bmuschko:gradle-cargo-plugin:2.0.3'
+        classpath 'org.jfrog.buildinfo:build-info-extractor-gradle:3.1.1'
+    }
+}
+
+plugins {
+	id 'org.springframework.boot' version '2.0.1.RELEASE'
+	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+	id 'com.jfrog.artifactory' version '4.25.3'
+}
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+apply plugin: 'java'
+apply plugin: 'war'
+
+group = 'com.container'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '1.8'
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+
+wrapper {
+    distributionType = Wrapper.DistributionType.ALL
+    gradleVersion = '4.10.3'
+}
+
+war {
+    archiveName = "container.war"
+    enabled = true
+    manifest {  
+        attributes('Main-Class': 'com.container.ContainerApplication')  
+    }  
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-batch:2.0.1.RELEASE'
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa:2.0.1.RELEASE'
+	implementation 'org.springframework.boot:spring-boot-starter-jersey:2.0.1.RELEASE'
+	implementation 'org.springframework.boot:spring-boot-starter-security:2.0.1.RELEASE'
+	implementation 'org.springframework.boot:spring-boot-starter-web:2.0.1.RELEASE'
+	implementation 'io.springfox:springfox-swagger2:2.9.2'
+	implementation 'io.springfox:springfox-swagger-ui:2.9.2'
+	implementation 'org.liquibase:liquibase-core:+'
+	implementation 'net.sourceforge.jtds:jtds:1.3.1'
+	implementation 'ch.obermuhlner:big-math:+'
+	
+	implementation group: 'io.jsonwebtoken', name: 'jjwt', version: '0.9.1'
+	compileOnly 'org.projectlombok:lombok:+'
+	implementation group: 'mysql', name: 'mysql-connector-java', version: '5.1.6'
+	
+	annotationProcessor 'org.projectlombok:lombok:+'
+	providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat:+'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test:+'
+	testImplementation 'org.springframework.batch:spring-batch-test:+'
+	testImplementation 'org.springframework.security:spring-security-test:+'
+
+
+	implementation project(':container-api-commons')
+    implementation project(':container-api-sdk')
+}
+
+test {
+	useJUnit()
+	testLogging.showStandardStreams = true
+}
+
+processResources {
+    include "**/*.xml"
+    include "**/*.sql"
+    include "**/application.properties"
+    include "**/*.txt"
+    include "**/*.html"
+    include "**/*.jrxml"
+    include "**/*.pdf"
+}

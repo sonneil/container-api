@@ -1,0 +1,3 @@
+include 'container-api-commons'
+
+rootProject.name = 'container-api-sdk'

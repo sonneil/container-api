@@ -1,0 +1,73 @@
+buildscript {
+    repositories {
+     	mavenLocal()
+        maven { 
+        	url "http://artifacts.sysone.com/public-libs"
+        }
+        maven { 
+        	url "http://artifacts.sysone.com/libs-snapshot"
+        }
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.bmuschko:gradle-cargo-plugin:2.0.3'
+        classpath 'org.jfrog.buildinfo:build-info-extractor-gradle:3.1.1'
+        classpath 'com.sysone.gradle:gradle-git-plugins:+'
+    }
+}
+
+repositories {
+	mavenLocal()
+	mavenCentral()
+}
+
+apply plugin: 'java'
+apply plugin: 'war'
+
+group = 'com.container.sdk'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '1.8'
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+
+jar {
+    enabled = true
+    manifest {  
+        attributes('Main-Class': 'com.container.sdk.SdkApplication')  
+    }
+}
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+artifacts {
+    archives sourcesJar
+}
+
+dependencies {
+	implementation('org.springframework.boot:spring-boot-starter-jersey:2.0.1.RELEASE') {
+		exclude group: 'org.slf4j', module: 'log4j-over-slf4j'
+		exclude group: 'ch.qos.logback', module: 'logback-classic'
+	}
+	implementation('org.springframework.boot:spring-boot-starter-security:2.0.1.RELEASE') {
+		exclude group: 'org.slf4j', module: 'log4j-over-slf4j'
+		exclude group: 'ch.qos.logback', module: 'logback-classic'
+	}
+	compileOnly 'org.projectlombok:lombok:+'
+	annotationProcessor 'org.projectlombok:lombok:+'
+	testImplementation('org.springframework.boot:spring-boot-starter-test:+') {
+		exclude group: 'org.slf4j', module: 'log4j-over-slf4j'
+		exclude group: 'ch.qos.logback', module: 'logback-classic'
+	}
+}
+
+test {
+	useJUnit()
+	testLogging.showStandardStreams = true
+}
