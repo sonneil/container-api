@@ -38,7 +38,8 @@ public class JwtUtilImpl implements JwtUtil, Serializable {
 
 	private String secret = "NNhp6kNnsu";
 
-	private Long expiration = 600000l;
+	// In Seconds
+	private Long expiration = 60l * 5l;
 
 	@Autowired
 	private UserDetailsService userDetailsService;

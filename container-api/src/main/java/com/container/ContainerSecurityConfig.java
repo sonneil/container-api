@@ -43,6 +43,7 @@ public class ContainerSecurityConfig extends WebSecurityConfigurerAdapter {
 	        .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
 	        .authorizeRequests()
 	        .antMatchers(HttpMethod.OPTIONS).permitAll()
+	        .antMatchers("/auth/token/validate**").permitAll()
 	        .antMatchers("/authenticate**").permitAll()
 	        .antMatchers("/v2/api-docs**").permitAll()
 	        .antMatchers("/swagger-ui.html/**").permitAll()

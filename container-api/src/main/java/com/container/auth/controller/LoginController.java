@@ -6,6 +6,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,6 +28,7 @@ public class LoginController implements LoginEndpoint {
 	
 	@Override
 	@PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+	@CrossOrigin(origins = "*")
 	public JwtAuthenticationResponseDTO performLogin(@RequestBody UserCredentialsDTO credentials) {
 		HttpServletRequest req = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes())
         .getRequest();
