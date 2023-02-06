@@ -6,7 +6,7 @@ This container provides an API protected with JWT mechanism (Stateless authentic
 
 
 Requisites: 
-Java 8, An MySQL Server instance running, Gradle (You can just use the wrapper).
+Java 8, A MySQL Server instance running, Gradle (You can just use the wrapper).
 
 
 
